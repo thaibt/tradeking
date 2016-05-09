@@ -3,8 +3,10 @@
 var OAuth = require('oauth').OAuth;
 var querystring = require('querystring');
 
-const marketEndpoint = 'https://api.tradeking.com/v1/market';
 const accountsEndpoint = 'https://api.tradeking.com/v1/accounts';
+const marketEndpoint = 'https://api.tradeking.com/v1/market';
+const memberEndpoint = 'https://api.tradeking.com/v1/member';
+const utilityEndpoint = 'https://api.tradeking.com/v1/utility';
 
 class Tradeking {
     constructor(credentials, format) {
@@ -220,6 +222,16 @@ class Tradeking {
         return this.get(
             marketEndpoint + '/toplists/' + list + '.' + this.format,
             params,
+            callback
+        );
+    }
+
+    // Member Calls
+    // -------------------------------------------------------------------------
+    memberProfile(callback) {
+        return this.get(
+            memberEndpoint + '/profile.' + this.format,
+            undefined,
             callback
         );
     }
