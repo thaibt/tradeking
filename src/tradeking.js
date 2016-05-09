@@ -223,6 +223,24 @@ class Tradeking {
             callback
         );
     }
+
+    // Utility Calls
+    // -------------------------------------------------------------------------
+    utilityStatus(callback) {
+        return this.get(
+            utilityEndpoint + '/status.' + this.format,
+            undefined,
+            callback
+        );
+    }
+
+    utilityVersion(callback) {
+        return this.get(
+            utilityEndpoint + '/version.' + this.format,
+            undefined,
+            callback
+        );
+    }
 };
 
 module.exports = Tradeking;
