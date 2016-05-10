@@ -7,6 +7,7 @@ const accountsEndpoint = 'https://api.tradeking.com/v1/accounts';
 const marketEndpoint = 'https://api.tradeking.com/v1/market';
 const memberEndpoint = 'https://api.tradeking.com/v1/member';
 const utilityEndpoint = 'https://api.tradeking.com/v1/utility';
+const watchlistEndpoint = 'https://api.tradeking.com/v1/watchlists';
 
 class Tradeking {
     constructor(credentials, format) {
@@ -29,28 +30,12 @@ class Tradeking {
             var request = this.oa.get(
                 endpoint  + '?' + querystring.stringify(params),
                 this.token,
-                this.tokenSecret
+                this.tokenSecret,
+                (err, data, res) => {
+                    if (err) reject(err);
+                    else resolve(JSON.parse(data).response);
+                }
             );
-
-            request.on('response' , (response) => {
-                var data = '';
-                response.on('data', (chunk) => {
-                    data += chunk;
-                });
-                response.on('end', () => {
-                    try {
-                        resolve(JSON.parse(data));
-                    } catch(error) {
-                        reject(error);
-                    }
-                });
-            });
-
-            request.on('error', (error) => {
-                reject(error);
-            });
-
-            request.end();
         });
 
         if (!callback) return promise;
@@ -249,6 +234,24 @@ class Tradeking {
     utilityVersion(callback) {
         return this.get(
             utilityEndpoint + '/version.' + this.format,
+            undefined,
+            callback
+        );
+    }
+
+    // Watchlist Calls
+    // -------------------------------------------------------------------------
+    getWatchlists(callback) {
+        return this.get(
+            watchlistEndpoint + '.' + this.format,
+            undefined,
+            callback
+        );
+    }
+
+    getWatchlist(id, callback) {
+        return this.get(
+            watchlistEndpoint + '/' + id + '.' + this.format,
             undefined,
             callback
         );
