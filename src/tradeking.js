@@ -27,13 +27,37 @@ class Tradeking {
 
     get(endpoint, params = {}, callback) {
         var promise = new Promise((resolve, reject) => {
-            var request = this.oa.get(
+            this.oa.get(
                 endpoint  + '?' + querystring.stringify(params),
                 this.token,
                 this.tokenSecret,
                 (err, data, res) => {
                     if (err) reject(err);
-                    else resolve(JSON.parse(data).response);
+                    else resolve(data);
+                }
+            );
+        });
+
+        if (!callback) return promise;
+
+        promise
+            .then((res) => { callback(null, res); })
+            .catch((err) => { callback(err); });
+
+        return null;
+    }
+
+    post(endpoint, bodyParams = {}, callback) {
+        var promise = new Promise((resolve, reject) => {
+            this.oa.post(
+                endpoint,
+                this.token,
+                this.tokenSecret,
+                querystring.stringify(bodyParams),
+                'application/x-www-form-urlencoded',
+                (err, data, res) => {
+                    if (err) reject(err);
+                    else resolve(data);
                 }
             );
         });
@@ -249,10 +273,36 @@ class Tradeking {
         );
     }
 
+    createWatchlist(bodyParams, callback) {
+        if (typeof bodyParams === 'function') {
+            callback = bodyParams;
+            bodyParams = undefined;
+        }
+
+        return this.post(
+            watchlistEndpoint + '.' + this.format,
+            bodyParams,
+            callback
+        );
+    }
+
     getWatchlist(id, callback) {
         return this.get(
             watchlistEndpoint + '/' + id + '.' + this.format,
             undefined,
+            callback
+        );
+    }
+
+    addToWatchlist(id, bodyParams, callback) {
+        if (typeof bodyParams === 'function') {
+            callback = bodyParams;
+            bodyParams = undefined;
+        }
+
+        return this.post(
+            watchlistEndpoint + '/' + id + '/symbols.' + this.format,
+            bodyParams,
             callback
         );
     }
